@@ -52,15 +52,15 @@
 //#define HAL_INS_ICM20XXX_I2C_ADDR (0x68)
 
 // BARO choices:
-#define HAL_BARO_DEFAULT HAL_BARO_BMP280_I2C
-#define HAL_BARO_BMP280_NAME "BMP280"
+//#define HAL_BARO_DEFAULT HAL_BARO_BMP280_I2C
+//#define HAL_BARO_BMP280_NAME "BMP280"
 // or one of these:
 //#define HAL_BARO_DEFAULT HAL_BARO_MS5837_I2C
 // or: GPIO 34
 //#define HAL_BARO_ANALOG_PIN (6)
 
 // MAG/COMPASS choices:
-#define HAL_COMPASS_DEFAULT HAL_COMPASS_AK8963_MPU9250
+//#define HAL_COMPASS_DEFAULT HAL_COMPASS_AK8963_MPU9250
 // or others:
 //#define HAL_COMPASS_ICM20948_I2C_ADDR (0x68)
 //#define HAL_COMPASS_AK09916_I2C_BUS 0
@@ -73,7 +73,7 @@
 //#define HAL_MAG_PROBE_LIST ADD_BACKEND(DRIVER_ICM20948, AP_Compass_AK09916::probe_ICM20948_I2C(0, ROTATION_NONE));
 //#define HAL_MAG_PROBE_LIST PROBE_MAG_SPI(Invensense, "mpu9250")
 // BARO probing:
-#define HAL_BARO_PROBE_LIST PROBE_BARO_I2C(BMP280, 0, 0x77)
+//#define HAL_BARO_PROBE_LIST PROBE_BARO_I2C(BMP280, 0, 0x77)
 
 // allow boot without a baro
 #define HAL_BARO_ALLOW_INIT_NO_BARO 1
@@ -88,22 +88,14 @@
 //
 // two different pin numbering schemes, both are ok, but only one at a time:
 #define HAL_ESP32_ADC_PINS_OPTION1 {\
-	{ADC1_CHANNEL_4, 11, 1},\
-	{ADC1_CHANNEL_3, 11, 2},\
-	{ADC1_CHANNEL_1, 11, 3},\
-	{ADC1_CHANNEL_0, 11, 4}\
-}
-#define HAL_ESP32_ADC_PINS_OPTION2 {\
-	{ADC1_GPIO35_CHANNEL, 11, 35},\
-	{ADC1_GPIO34_CHANNEL, 11, 34},\
-	{ADC1_GPIO39_CHANNEL, 11, 39},\
-	{ADC1_GPIO36_CHANNEL, 11, 36}\
+	{ADC1_CHANNEL_1, 11, 1},\
+	{ADC1_CHANNEL_2, 11, 2}\
 }
 // pick one:
 //#define HAL_ESP32_ADC_PINS HAL_ESP32_ADC_PINS_OPTION1
 #define HAL_ESP32_ADC_PINS HAL_ESP32_ADC_PINS_OPTION1
 
-#define HAL_INS_MPU9250_NAME "mpu9250"
+#define HAL_INS_ICM42688_NAME "icm42688"
 
 // uncommenting one or more of these will give more console debug in certain areas..
 //#define INSEDEBUG 1
@@ -112,12 +104,12 @@
 //#define FSDEBUG 1
 //#define BUSDEBUG 1
 
-#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensense, HAL_INS_MPU9250_NAME, ROTATION_NONE)
+#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensensev3, HAL_INS_ICM42688_NAME, ROTATION_NONE)
 //#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensense, HAL_INS_MPU9250_NAME, ROTATION_ROLL_180)
 // MAG/COMPASS probing:
-#define AP_COMPASS_AK8963_ENABLED TRUE
-#define HAL_MAG_PROBE_LIST ADD_BACKEND(DRIVER_AK8963, AP_Compass_AK8963::probe_mpu9250(0, ROTATION_NONE))
-#define HAL_PROBE_EXTERNAL_I2C_COMPASSES 1
+//#define AP_COMPASS_AK8963_ENABLED TRUE
+//#define HAL_MAG_PROBE_LIST ADD_BACKEND(DRIVER_AK8963, AP_Compass_AK8963::probe_mpu9250(0, ROTATION_NONE))
+//#define HAL_PROBE_EXTERNAL_I2C_COMPASSES 1
 
 //#define HAL_BARO_PROBE_LIST PROBE_BARO_SPI(BMP280, "bmp280")
 
@@ -142,18 +134,18 @@
 
 //RCOUT which pins are used?
 
-#define HAL_ESP32_RCOUT { GPIO_NUM_11,GPIO_NUM_10, GPIO_NUM_9, GPIO_NUM_8, GPIO_NUM_7, GPIO_NUM_6 }
+#define HAL_ESP32_RCOUT { GPIO_NUM_45, GPIO_NUM_48, GPIO_NUM_47, GPIO_NUM_21 }
 
 // SPI BUS setup, including gpio, dma, etc
 // note... we use 'vspi' for the bmp280 and mpu9250
 #define HAL_ESP32_SPI_BUSES \
-    {.host=SPI3_HOST, .dma_ch=SPI_DMA_CH_AUTO, .mosi=GPIO_NUM_36, .miso=GPIO_NUM_37, .sclk=GPIO_NUM_35}
+    {.host=SPI3_HOST, .dma_ch=SPI_DMA_CH_AUTO, .mosi=GPIO_NUM_37, .miso=GPIO_NUM_36, .sclk=GPIO_NUM_38}
 // tip:  VSPI_HOST  is an alternative name for esp's SPI3
 //#define HAL_ESP32_SPI_BUSES {}
 
 // SPI per-device setup, including speeds, etc.
 #define HAL_ESP32_SPI_DEVICES \
-    {.name="mpu9250", .bus=0, .device=0, .cs=GPIO_NUM_34,  .mode = 0, .lspeed=2*MHZ, .hspeed=8*MHZ}
+    {.name="icm42688", .bus=0, .device=0, .cs=GPIO_NUM_39,  .mode = 0, .lspeed=2*MHZ, .hspeed=8*MHZ}
 //#define HAL_ESP32_SPI_DEVICES {}
 
 //I2C bus list
@@ -163,12 +155,12 @@
 
 
 // rcin on what pin?
-#define HAL_ESP32_RCIN GPIO_NUM_14
+#define HAL_ESP32_RCIN GPIO_NUM_12
 
 
 //HARDWARE UARTS
 #define HAL_ESP32_UART_DEVICES \
-  {.port=UART_NUM_0, .rx=GPIO_NUM_44, .tx=GPIO_NUM_43 },{.port=UART_NUM_1, .rx=GPIO_NUM_17, .tx=GPIO_NUM_18 }
+  {.port=UART_NUM_0, .rx=GPIO_NUM_13, .tx=GPIO_NUM_14 },{.port=UART_NUM_1, .rx=GPIO_NUM_10, .tx=GPIO_NUM_11 }
 
 #define HAVE_FILESYSTEM_SUPPORT 1
 
