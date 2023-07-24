@@ -50,7 +50,7 @@ public:
 
     uint32_t bw_in_bytes_per_second() const override
     {
-        return 10*1024;
+        return 100*1024;
     }
 
     /*
@@ -69,14 +69,14 @@ private:
     bool _initialized;
     const size_t TX_BUF_SIZE = 1024;
     const size_t RX_BUF_SIZE = 1024;
-    uint8_t _buffer[32];
+    uint8_t _buffer[64];
     ByteBuffer _readbuf{0};
     ByteBuffer _writebuf{0};
     Semaphore _write_mutex;
     void read_data();
     void write_data();
 
-    uint8_t uart_num;
+    tinyusb_cdcacm_itf_t itf;
 
     // timestamp for receiving data on the UART, avoiding a lock
     uint64_t _receive_timestamp[2];

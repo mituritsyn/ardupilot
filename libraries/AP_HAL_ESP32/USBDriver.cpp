@@ -20,18 +20,34 @@
 
 extern const AP_HAL::HAL& hal;
 
+static ByteBuffer* static_readbuf;
+
 namespace ESP32
 {
 
 void USBDriver::vprintf(const char *fmt, va_list ap)
 {
 
-    if (1 == 0) {
-        esp_log_writev(ESP_LOG_INFO, "", fmt, ap);
-    } else {
-        AP_HAL::UARTDriver::vprintf(fmt, ap);
-    }
+    // if (1 == 1) {
+         esp_log_writev(ESP_LOG_INFO, "", fmt, ap);
+    // } else {
+    //     AP_HAL::UARTDriver::vprintf(fmt, ap);
+    // }
 }
+
+static void IRAM_ATTR cdc_rx_callback(int itf, cdcacm_event_t *event)
+{
+    size_t rx_size = 0;
+    uint8_t buff[64];
+
+    esp_err_t ret = tinyusb_cdcacm_read((tinyusb_cdcacm_itf_t)itf, buff, sizeof(buff), &rx_size);
+    if (ret == ESP_OK) {
+        if (rx_size > 0) {
+             static_readbuf->write(buff, rx_size);
+            }
+    } 
+}
+
 
 void USBDriver::_begin(uint32_t b, uint16_t rxS, uint16_t txS)
 {
@@ -43,19 +59,25 @@ void USBDriver::_begin(uint32_t b, uint16_t rxS, uint16_t txS)
                 .usb_dev = TINYUSB_USBDEV_0,
                 .cdc_port = TINYUSB_CDC_ACM_0,
                 .rx_unread_buf_sz = 64,
-                .callback_rx = NULL, // the first way to register a callback
+                .callback_rx = (tusb_cdcacm_callback_t)&cdc_rx_callback, // NULL, // the first way to register a callback
                 .callback_rx_wanted_char = NULL,
                 .callback_line_state_changed = NULL,
                 .callback_line_coding_changed = NULL
             };
 
             tusb_cdc_acm_init(&acm_cfg);
+            itf = (tinyusb_cdcacm_itf_t)0;
+
+            _readbuf.set_size(RX_BUF_SIZE);
+            _writebuf.set_size(TX_BUF_SIZE);
+
+            static_readbuf = &_readbuf;
             
             _initialized = true;
-        } else {
-           // flush();
-           // uart_set_baudrate(p, b);
 
+            printf("USBDriver begin");
+        } else {
+            flush();
         }
     _baudrate = b;
 }
@@ -68,12 +90,15 @@ void USBDriver::_end()
         _writebuf.set_size(0);
     }
     _initialized = false;
+     printf("USBDriver end");
 }
 
 void USBDriver::_flush()
 {
-   // uart_port_t p = uart_desc[uart_num].port;
-   // uart_flush(p);
+    if (!_initialized) {
+        return;
+    }
+        tinyusb_cdcacm_write_flush(itf, 0);
 }
 
 bool USBDriver::is_initialized()
@@ -128,50 +153,47 @@ void IRAM_ATTR USBDriver::_timer_tick(void)
     if (!_initialized) {
         return;
     }
-    read_data();
+    //read_data();
     write_data();
 }
 
 void IRAM_ATTR USBDriver::read_data()
 {
-    // uart_port_t p = uart_desc[uart_num].port;
-    // int count = 0;
-    // do {
-    //     count = uart_read_bytes(p, _buffer, sizeof(_buffer), 0);
-    //     if (count > 0) {
-    //         _readbuf.write(_buffer, count);
-    //     }
-    // } while (count > 0);
+    size_t rx_size = 0;
+    do {
+        rx_size = 0;
+        esp_err_t ret = tinyusb_cdcacm_read(itf, _buffer, sizeof(_buffer), &rx_size);
+        if ((rx_size > 0) && (ret == ESP_OK)) {
+                _readbuf.write(_buffer, rx_size);
+                } else break;
+    } while (rx_size > 0);
 }
 
 void IRAM_ATTR USBDriver::write_data()
 {
-    // uart_port_t p = uart_desc[uart_num].port;
-    // int count = 0;
-    // _write_mutex.take_blocking();
-    // do {
-    //     count = _writebuf.peekbytes(_buffer, sizeof(_buffer));
-    //     if (count > 0) {
-    //         count = uart_tx_chars(p, (const char*) _buffer, count);
-    //         _writebuf.advance(count);
-    //     }
-    // } while (count > 0);
-    // _write_mutex.give();
+     _write_mutex.take_blocking();
+     size_t count = 0;
+     do {
+        count = _writebuf.peekbytes(_buffer, sizeof(_buffer));
+        if (count > 0) {
+            tinyusb_cdcacm_write_queue(itf, (const uint8_t*) _buffer, count);
+            _writebuf.advance(count);
+        }
+    } while (count > 0);
+    _write_mutex.give();
 }
 
 size_t IRAM_ATTR USBDriver::_write(const uint8_t *buffer, size_t size)
 {
-    // if (!_initialized) {
-    //     return 0;
-    // }
+    if (!_initialized) {
+        return 0;
+    }
 
-    // _write_mutex.take_blocking();
+    _write_mutex.take_blocking();
 
-
-    // size_t ret = _writebuf.write(buffer, size);
-    // _write_mutex.give();
-    // return ret;
-    return 0;
+    size_t ret = _writebuf.write(buffer, size);
+    _write_mutex.give();
+    return ret;
 }
 
 bool USBDriver::_discard_input()
