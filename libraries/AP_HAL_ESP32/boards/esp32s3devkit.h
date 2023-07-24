@@ -43,7 +43,7 @@
 //#define HAL_BOARD_ESP32 12
 #define AP_INERTIALSENSOR_ENABLED 1
 //INS choices:
-#define HAL_INS_DEFAULT HAL_INS_MPU9250_SPI
+//#define HAL_INS_DEFAULT HAL_INS_MPU9250_SPI
 //#define HAL_INS_MPU9250_NAME "MPU9250"
 
 // or this:
@@ -98,11 +98,11 @@
 #define HAL_INS_ICM42688_NAME "icm42688"
 
 // uncommenting one or more of these will give more console debug in certain areas..
-//#define INSEDEBUG 1
+#define INSEDEBUG 1
 //#define STORAGEDEBUG 1
-//#define SCHEDDEBUG 1
-//#define FSDEBUG 1
-//#define BUSDEBUG 1
+#define SCHEDDEBUG 1
+#define FSDEBUG 1
+#define BUSDEBUG 1
 
 #define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensensev3, HAL_INS_ICM42688_NAME, ROTATION_NONE)
 //#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensense, HAL_INS_MPU9250_NAME, ROTATION_ROLL_180)
@@ -162,21 +162,22 @@
 #define HAL_ESP32_UART_DEVICES \
   {.port=UART_NUM_0, .rx=GPIO_NUM_13, .tx=GPIO_NUM_14 },{.port=UART_NUM_1, .rx=GPIO_NUM_10, .tx=GPIO_NUM_11 }
 
-#define HAVE_FILESYSTEM_SUPPORT 1
+//#define HAVE_FILESYSTEM_SUPPORT 0
 
 // Do u want to use mmc or spi mode for the sd card, this is board specific ,
 //  as mmc uses specific pins but is quicker,
-#define HAL_ESP32_SDMMC 1
+//#define HAL_ESP32_SDMMC 0
 // and spi is more flexible pinouts....  dont forget vspi/hspi should be selected to NOT conflict with SPI_BUSES above
 //#define HAL_ESP32_SDSPI {.host=VSPI_HOST, .dma_ch=2, .mosi=GPIO_NUM_2, .miso=GPIO_NUM_15, .sclk=GPIO_NUM_14, .cs=GPIO_NUM_21}
 
-#define HAL_ESP32_SDCARD 1
-#define LOGGER_MAVLINK_SUPPORT 1
+//#define HAL_ESP32_SDCARD 0
+
+//#define LOGGER_MAVLINK_SUPPORT 0
 #define HAL_BOARD_LOG_DIRECTORY "/SDCARD/APM/LOGS"
 #define HAL_BOARD_TERRAIN_DIRECTORY "/SDCARD/APM/TERRAIN"
 #define HAL_BOARD_STORAGE_DIRECTORY "/SDCARD/APM/STORAGE"
-#define HAL_OS_POSIX_IO 1
+//#define HAL_OS_POSIX_IO 0
 
 // this becomes the default value for the ardupilot param LOG_BACKEND_TYPE, which most ppl want to be 1, for log-to-flash
 // setting to 2 means log-over-mavlink to a companion computer etc.
-#define HAL_LOGGING_BACKENDS_DEFAULT 1
+#define HAL_LOGGING_BACKENDS_DEFAULT 2

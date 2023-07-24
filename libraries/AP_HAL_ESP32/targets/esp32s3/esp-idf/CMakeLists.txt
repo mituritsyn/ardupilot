@@ -22,6 +22,7 @@ idf_build_process(esp32s3
                esp_adc_cal
                nvs_flash
                esptool_py
+               tinyusb
                app_update
     SDKCONFIG ${CMAKE_CURRENT_LIST_DIR}/sdkconfig
     BUILD_DIR ${CMAKE_BINARY_DIR})
@@ -101,6 +102,7 @@ target_link_libraries(${elf_file}
                 idf::spi_flash
                 idf::tcpip_adapter
                 idf::app_update
+                idf::tinyusb
                 )
 
 # Attach additional targets to the executable file for flashing,

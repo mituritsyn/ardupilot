@@ -21,6 +21,7 @@
 #include "I2CDevice.h"
 #include "SPIDevice.h"
 #include "UARTDriver.h"
+#include "USBDriver.h"
 #include "WiFiDriver.h"
 #include "WiFiUdpDriver.h"
 #include "RCInput.h"
@@ -32,6 +33,7 @@
 
 static Empty::UARTDriver uartADriver;
 static ESP32::UARTDriver cons(0);
+static ESP32::USBDriver  uartusb;
 static ESP32::UARTDriver uartBDriver(1);
 #ifdef HAL_ESP32_WIFI
 #if HAL_ESP32_WIFI == 1
@@ -72,7 +74,7 @@ extern const AP_HAL::HAL& hal;
 
 HAL_ESP32::HAL_ESP32() :
     AP_HAL::HAL(
-        &cons, //Console/mavlink
+        &uartusb, //Console/mavlink
         &uartBDriver, //GPS 1
         &uartCDriver, //Telem 1
         &uartDDriver, //Telem 2
