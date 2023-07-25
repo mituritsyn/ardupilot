@@ -103,6 +103,7 @@
 #define SCHEDDEBUG 1
 #define FSDEBUG 1
 #define BUSDEBUG 1
+//#define INS_TIMING_DEBUG 0
 
 #define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensensev3, HAL_INS_ICM42688_NAME, ROTATION_NONE)
 //#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensense, HAL_INS_MPU9250_NAME, ROTATION_ROLL_180)
@@ -145,7 +146,7 @@
 
 // SPI per-device setup, including speeds, etc.
 #define HAL_ESP32_SPI_DEVICES \
-    {.name="icm42688", .bus=0, .device=0, .cs=GPIO_NUM_39,  .mode = 0, .lspeed=2*MHZ, .hspeed=8*MHZ}
+    {.name=HAL_INS_ICM42688_NAME, .bus=0, .device=0, .cs=GPIO_NUM_39,  .mode = 0, .lspeed=4*MHZ, .hspeed=24*MHZ}
 //#define HAL_ESP32_SPI_DEVICES {}
 
 //I2C bus list

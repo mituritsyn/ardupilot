@@ -93,7 +93,7 @@ SPIDevice::~SPIDevice()
     free(pname);
 }
 
-spi_device_handle_t SPIDevice::current_handle()
+spi_device_handle_t IRAM_ATTR SPIDevice::current_handle()
 {
     if (speed == AP_HAL::Device::SPEED_HIGH && high_speed_dev_handle != nullptr) {
         return high_speed_dev_handle;
@@ -101,7 +101,7 @@ spi_device_handle_t SPIDevice::current_handle()
     return low_speed_dev_handle;
 }
 
-bool SPIDevice::set_speed(AP_HAL::Device::Speed _speed)
+bool IRAM_ATTR SPIDevice::set_speed(AP_HAL::Device::Speed _speed)
 {
 #ifdef SPIDEBUG
     printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
@@ -110,7 +110,7 @@ bool SPIDevice::set_speed(AP_HAL::Device::Speed _speed)
     return true;
 }
 
-bool SPIDevice::transfer(const uint8_t *send, uint32_t send_len,
+bool IRAM_ATTR SPIDevice::transfer(const uint8_t *send, uint32_t send_len,
                          uint8_t *recv, uint32_t recv_len)
 {
 #ifdef SPIDEBUG
@@ -135,7 +135,7 @@ bool SPIDevice::transfer(const uint8_t *send, uint32_t send_len,
     return true;
 }
 
-bool SPIDevice::transfer_fullduplex(const uint8_t *send, uint8_t *recv, uint32_t len)
+bool IRAM_ATTR SPIDevice::transfer_fullduplex(const uint8_t *send, uint8_t *recv, uint32_t len)
 {
 #ifdef SPIDEBUG
     printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
@@ -152,7 +152,7 @@ bool SPIDevice::transfer_fullduplex(const uint8_t *send, uint8_t *recv, uint32_t
     return true;
 }
 
-void SPIDevice::acquire_bus(bool accuire)
+void IRAM_ATTR SPIDevice::acquire_bus(bool accuire)
 {
 #ifdef SPIDEBUG
     printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
@@ -169,7 +169,7 @@ void SPIDevice::acquire_bus(bool accuire)
 AP_HAL::Semaphore *SPIDevice::get_semaphore()
 {
 #ifdef SPIDEBUG
-    rintf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
+    printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
 #endif
     return &bus.semaphore;
 }
