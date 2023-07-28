@@ -63,6 +63,7 @@ void Scheduler::init()
 
 #ifdef SCHEDDEBUG
     printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
+    printf("portTICK_PERIOD_MS :  %d\n", portTICK_PERIOD_MS); 
 #endif
 
     hal.console->printf("%s:%d running with CONFIG_FREERTOS_HZ=%d\n", __PRETTY_FUNCTION__, __LINE__,CONFIG_FREERTOS_HZ);
@@ -202,8 +203,14 @@ void Scheduler::delay(uint16_t ms)
 
 void Scheduler::delay_microseconds(uint16_t us)
 {
-    if (us < 100) {
-        ets_delay_us(us);
+    static int cnt = 0;
+    if (us < 1000) {
+        cnt++;
+        if (cnt == 10) {
+            cnt = 0;
+            vTaskDelay(1);
+        }
+      //  ets_delay_us(us);
     } else { // Minimum delay for FreeRTOS is 1ms
         uint32_t tick = portTICK_PERIOD_MS * 1000;
         vTaskDelay((us+tick-1)/tick);
@@ -420,7 +427,7 @@ void Scheduler::_io_thread(void* arg)
             uint32_t now = AP_HAL::millis();
             if (now - last_sd_start_ms > 3000) {
                 last_sd_start_ms = now;
-                sdcard_retry();
+               // sdcard_retry();
             }
         }
     }
@@ -534,7 +541,7 @@ void IRAM_ATTR Scheduler::_main_thread(void *arg)
 #endif
     while (true) {
         sched->callbacks->loop();
-        sched->delay_microseconds(250);
+        sched->delay_microseconds(1000); //250
 
         sched->print_stats(); // only runs every 60 seconds.
     }

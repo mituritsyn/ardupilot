@@ -58,7 +58,7 @@ void USBDriver::_begin(uint32_t b, uint16_t rxS, uint16_t txS)
             tinyusb_config_cdcacm_t acm_cfg = {
                 .usb_dev = TINYUSB_USBDEV_0,
                 .cdc_port = TINYUSB_CDC_ACM_0,
-                .rx_unread_buf_sz = 64,
+                .rx_unread_buf_sz = 512,
                 .callback_rx = (tusb_cdcacm_callback_t)&cdc_rx_callback, // NULL, // the first way to register a callback
                 .callback_rx_wanted_char = NULL,
                 .callback_line_state_changed = NULL,

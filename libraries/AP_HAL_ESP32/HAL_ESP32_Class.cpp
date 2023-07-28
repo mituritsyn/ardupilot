@@ -32,7 +32,7 @@
 
 
 static Empty::UARTDriver uartADriver;
-static ESP32::UARTDriver cons(0);
+//static ESP32::UARTDriver cons(0);
 static ESP32::USBDriver  uartusb;
 static ESP32::UARTDriver uartBDriver(1);
 #ifdef HAL_ESP32_WIFI
@@ -44,7 +44,7 @@ static ESP32::WiFiUdpDriver uartCDriver; //udp
 #else
 static Empty::UARTDriver uartCDriver;
 #endif
-static ESP32::UARTDriver uartDDriver(2);
+static ESP32::UARTDriver uartDDriver(0);
 static Empty::UARTDriver uartEDriver;
 static Empty::UARTDriver uartFDriver;
 static Empty::UARTDriver uartGDriver;
@@ -89,7 +89,7 @@ HAL_ESP32::HAL_ESP32() :
         nullptr,
         &analogIn,
         &storageDriver,
-        &cons,
+        &uartusb,
         &gpioDriver,
         &rcinDriver,
         &rcoutDriver,
