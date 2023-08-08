@@ -54,6 +54,7 @@ public:
     AP_Int16 _loop_rate_hz;
 
     static void thread_create_trampoline(void *ctx);
+    uint8_t calculate_thread_priority(priority_base base, int8_t priority) const;
     bool thread_create(AP_HAL::MemberProc, const char *name, uint32_t stack_size, priority_base base, int8_t priority) override;
 
     /*static const int SPI_PRIORITY = 40; // if your primary imu is spi, this should be above the i2c value, spi is better.

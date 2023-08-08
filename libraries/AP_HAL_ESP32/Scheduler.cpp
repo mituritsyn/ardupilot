@@ -133,22 +133,11 @@ void Scheduler::thread_create_trampoline(void *ctx)
     free(t);
 }
 
-/*
-  create a new thread
-*/
-bool Scheduler::thread_create(AP_HAL::MemberProc proc, const char *name, uint32_t requested_stack_size, priority_base base, int8_t priority)
+uint8_t Scheduler::calculate_thread_priority(priority_base base, int8_t priority) const
 {
 #ifdef SCHEDDEBUG
     printf("%s:%d \n", __PRETTY_FUNCTION__, __LINE__);
 #endif
-
-    // take a copy of the MemberProc, it is freed after thread exits
-    AP_HAL::MemberProc *tproc = (AP_HAL::MemberProc *)calloc(1, sizeof(proc));
-    if (!tproc) {
-        return false;
-    }
-    *tproc = proc;
-
     uint8_t thread_priority = IO_PRIO;
     static const struct {
         priority_base base;
@@ -175,6 +164,24 @@ bool Scheduler::thread_create(AP_HAL::MemberProc proc, const char *name, uint32_
             break;
         }
     }
+
+    return thread_priority;
+}
+
+/*
+  create a new thread
+*/
+bool Scheduler::thread_create(AP_HAL::MemberProc proc, const char *name, uint32_t requested_stack_size, priority_base base, int8_t priority)
+{
+    // take a copy of the MemberProc, it is freed after thread exits
+    AP_HAL::MemberProc *tproc = (AP_HAL::MemberProc *)calloc(1, sizeof(proc));
+    if (!tproc) {
+        return false;
+    }
+    *tproc = proc;
+    
+    const uint8_t thread_priority = calculate_thread_priority(base, priority);
+
     // chibios has a 'thread working area', we just another 1k.
     #define EXTRA_THREAD_SPACE 1024
     uint32_t actual_stack_size = requested_stack_size+EXTRA_THREAD_SPACE;
@@ -522,8 +529,8 @@ void IRAM_ATTR Scheduler::_main_thread(void *arg)
 #endif
     Scheduler *sched = (Scheduler *)arg;
     hal.serial(0)->begin(115200);
-    hal.serial(1)->begin(57600);
-    hal.serial(2)->begin(57600);
+    hal.serial(1)->begin(115200);
+    hal.serial(2)->begin(115200);
     //hal.uartC->begin(921600);
     hal.serial(3)->begin(115200);
 
