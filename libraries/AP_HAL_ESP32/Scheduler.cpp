@@ -496,16 +496,6 @@ void Scheduler::_uart_thread(void *arg)
     }
 }
 
-
-// get the active main loop rate
-uint16_t Scheduler::get_loop_rate_hz(void)
-{
-    if (_active_loop_rate_hz == 0) {
-        _active_loop_rate_hz = _loop_rate_hz;
-    }
-    return _active_loop_rate_hz;
-}
-
 // once every 60 seconds, print some stats...
 void Scheduler::print_stats(void)
 {
@@ -516,7 +506,6 @@ void Scheduler::print_stats(void)
         printf("\n\n%s\n", buffer);
         heap_caps_print_heap_info(0);
         last_run = AP_HAL::millis64();
-        printf("loop_rate_hz: %d\n",get_loop_rate_hz());
     }
 }
 
