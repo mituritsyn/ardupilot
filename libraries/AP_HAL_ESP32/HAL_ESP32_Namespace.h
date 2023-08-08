@@ -3,7 +3,9 @@
 namespace ESP32
 {
 class UARTDriver;
+#ifdef USE_USB
 class USBDriver;
+#endif
 class WiFiDriver;
 class WiFiUdpDriver;
 class Scheduler;

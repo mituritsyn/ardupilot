@@ -15,6 +15,9 @@
 
 #pragma once
 
+//for fast turn on/off usb as it does not allow jtag debugging
+#define USE_USB 
+
 #include <AP_HAL/AP_HAL.h>
 #include <AP_HAL_Empty/AP_HAL_Empty_Namespace.h>
 #include <AP_HAL_ESP32/HAL_ESP32_Namespace.h>

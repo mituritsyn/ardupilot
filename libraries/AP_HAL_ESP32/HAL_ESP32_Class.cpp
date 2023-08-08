@@ -21,7 +21,9 @@
 #include "I2CDevice.h"
 #include "SPIDevice.h"
 #include "UARTDriver.h"
+#ifdef USE_USB
 #include "USBDriver.h"
+#endif
 #include "WiFiDriver.h"
 #include "WiFiUdpDriver.h"
 #include "RCInput.h"
@@ -32,9 +34,13 @@
 
 
 static Empty::UARTDriver uartADriver;
-//static ESP32::UARTDriver cons(0);
-static ESP32::USBDriver  uartusb;
+#ifdef USE_USB
+    static ESP32::USBDriver  uartusb;       
+#else
+    static ESP32::UARTDriver cons(0);
+#endif
 static ESP32::UARTDriver uartBDriver(1);
+
 #ifdef HAL_ESP32_WIFI
 #if HAL_ESP32_WIFI == 1
 static ESP32::WiFiDriver uartCDriver; //tcp, client should connect to 192.168.4.1 port 5760
@@ -74,7 +80,11 @@ extern const AP_HAL::HAL& hal;
 
 HAL_ESP32::HAL_ESP32() :
     AP_HAL::HAL(
+#ifdef USE_USB
         &uartusb, //Console/mavlink
+#else
+        &cons,
+#endif
         &uartBDriver, //GPS 1
         &uartCDriver, //Telem 1
         &uartDDriver, //Telem 2
@@ -89,7 +99,11 @@ HAL_ESP32::HAL_ESP32() :
         nullptr,
         &analogIn,
         &storageDriver,
-        &uartusb,
+#ifdef USE_USB
+        &uartusb, //Console/mavlink
+#else
+        &cons,
+#endif
         &gpioDriver,
         &rcinDriver,
         &rcoutDriver,
