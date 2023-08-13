@@ -190,6 +190,12 @@ float AP::PerfInfo::get_filtered_loop_rate_hz() const
     if (filt_time_s <= 0) {
         return loop_rate_hz;
     }
+    static int cnt = 0;
+    cnt++;
+    if(cnt == 10){
+        hal.console->printf("filtered loop rate %f\n", 1.0/filt_time_s);
+        cnt = 0;
+    }
     return 1.0 / filt_time_s;
 }
 

@@ -13,6 +13,26 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+// #define OSD_ENABLED           DISABLED
+// #define LOGGING_ENABLED       DISABLED
+// #define AP_AIRSPEED_ENABLED DISABLED
+// #define AP_GRIPPER_ENABLED  DISABLED
+// #define AP_WINCH_ENABLED  DISABLED
+// #define STATS_ENABLED DISABLED
+// #define AP_RELAY_ENABLED  DISABLED
+// #define AP_AIRSPEED_ENABLED DISABLED
+// #define AC_PRECLAND_ENABLED DISABLED 
+// #define HAL_PROXIMITY_ENABLED DISABLED
+// #define AP_BEACON_ENABLED DISABLED
+
+#define AP_VIDEOTX_ENABLED DISABLED
+#define OSD_ENABLED DISABLED
+#define AP_TRAMP_ENABLED DISABLED
+#define HAL_MSP_ENABLED DISABLED
+#define OSD_PARAM_ENABLED DISABLED
+#define OSD_PARAM_ENABLED DISABLED
+//for fast turn on/off usb as it does not allow jtag debugging
+#define USE_USB 
 
 #define CONFIG_HAL_BOARD_SUBTYPE HAL_BOARD_SUBTYPE_ESP32_S3DEVKIT
 // make sensor selection clearer
@@ -40,10 +60,10 @@
 #define HAL_ESP32_RMT_RX_PIN_NUMBER GPIO_NUM_14
 
 //#define CONFIG_HAL_BOARD 12
-//#define HAL_BOARD_ESP32 12
+// #define CONFIG_HAL_BOARD = HAL_BOARD_ESP32
 #define AP_INERTIALSENSOR_ENABLED 1
 //INS choices:
-//#define HAL_INS_DEFAULT HAL_INS_MPU9250_SPI
+// #define HAL_INS_DEFAULT HAL_INS_NONE
 //#define HAL_INS_MPU9250_NAME "MPU9250"
 
 // or this:
@@ -80,20 +100,20 @@
 
 
 // ADC is available on lots of pints on the esp32, but adc2 cant co-exist with wifi we choose to allow ADC on :
-//#define HAL_DISABLE_ADC_DRIVER 1
+#define HAL_DISABLE_ADC_DRIVER 1
 #define TRUE 1
-#define HAL_USE_ADC TRUE
+#define HAL_USE_ADC 0
 
 // the pin number, the gain/multiplier associated with it, the ardupilot name for the pin in parameter/s.
 //
 // two different pin numbering schemes, both are ok, but only one at a time:
-#define HAL_ESP32_ADC_PINS_OPTION1 {\
-	{ADC1_CHANNEL_1, 11, 1},\
-	{ADC1_CHANNEL_2, 11, 2}\
-}
+// #define HAL_ESP32_ADC_PINS_OPTION1 {
+// 	{ADC1_CHANNEL_1, 11, 1},
+// 	{ADC1_CHANNEL_2, 11, 2}
+// }
 // pick one:
 //#define HAL_ESP32_ADC_PINS HAL_ESP32_ADC_PINS_OPTION1
-#define HAL_ESP32_ADC_PINS HAL_ESP32_ADC_PINS_OPTION1
+// #define HAL_ESP32_ADC_PINS HAL_ESP32_ADC_PINS_OPTION1
 
 #define HAL_INS_ICM42688_NAME "icm42688"
 
@@ -101,12 +121,12 @@
 #define INSEDEBUG 1
 //#define STORAGEDEBUG 1
 #define SCHEDDEBUG 1
-#define FSDEBUG 1
+#define FSDEBUG 0
 #define BUSDEBUG 1
-//#define INS_TIMING_DEBUG 0
+#define INS_TIMING_DEBUG 1
 
 #define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensensev3, HAL_INS_ICM42688_NAME, ROTATION_ROLL_180_YAW_270 )
-//#define HAL_INS_PROBE_LIST PROBE_IMU_SPI( Invensense, HAL_INS_MPU9250_NAME, ROTATION_ROLL_180)
+
 // MAG/COMPASS probing:
 //#define AP_COMPASS_AK8963_ENABLED TRUE
 //#define HAL_MAG_PROBE_LIST ADD_BACKEND(DRIVER_AK8963, AP_Compass_AK8963::probe_mpu9250(0, ROTATION_NONE))
@@ -136,6 +156,11 @@
 //RCOUT which pins are used?
 
 #define HAL_ESP32_RCOUT { GPIO_NUM_45, GPIO_NUM_48, GPIO_NUM_47, GPIO_NUM_21 }
+// //SPI Buses
+// #define HAL_ESP32_SPI_BUSES				{}
+
+// //SPI Devices
+// #define HAL_ESP32_SPI_DEVICES				{}
 
 // SPI BUS setup, including gpio, dma, etc
 // note... we use 'vspi' for the bmp280 and mpu9250

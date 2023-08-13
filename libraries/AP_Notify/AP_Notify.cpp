@@ -273,7 +273,7 @@ void AP_Notify::add_backends(void)
     if (_num_devices != 0) {
         return;
     }
-
+// wtf Notify_LED_MAX ever assigned?
     for (uint32_t i = 1; i < Notify_LED_MAX; i = i << 1) {
         switch(_led_type & i) {
             case Notify_LED_None:

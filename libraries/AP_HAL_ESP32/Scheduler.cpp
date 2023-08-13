@@ -43,18 +43,11 @@ Scheduler::Scheduler()
     _initialized = false;
 }
 
-void disableCore0WDT()
+void disableCoreWDT(UBaseType_t cpuid)
 {
-    TaskHandle_t idle_0 = xTaskGetIdleTaskHandleForCPU(0);
-    if (idle_0 == NULL || esp_task_wdt_delete(idle_0) != ESP_OK) {
+    TaskHandle_t idle = xTaskGetIdleTaskHandleForCPU(cpuid);
+    if (idle == NULL || esp_task_wdt_delete(idle) != ESP_OK) {
         //print("Failed to remove Core 0 IDLE task from WDT");
-    }
-}
-void disableCore1WDT()
-{
-    TaskHandle_t idle_1 = xTaskGetIdleTaskHandleForCPU(1);
-    if (idle_1 == NULL || esp_task_wdt_delete(idle_1) != ESP_OK) {
-        //print("Failed to remove Core 1 IDLE task from WDT");
     }
 }
 
@@ -69,7 +62,7 @@ void Scheduler::init()
     hal.console->printf("%s:%d running with CONFIG_FREERTOS_HZ=%d\n", __PRETTY_FUNCTION__, __LINE__,CONFIG_FREERTOS_HZ);
 
     // pin main thread to Core 0, and we'll also pin other heavy-tasks to core 1, like wifi-related.
-    if (xTaskCreatePinnedToCore(_main_thread, "APM_MAIN", Scheduler::MAIN_SS, this, Scheduler::MAIN_PRIO, &_main_task_handle,1) != pdPASS) {
+    if (xTaskCreatePinnedToCore(_main_thread, "APM_MAIN", Scheduler::MAIN_SS, this, Scheduler::MAIN_PRIO, &_main_task_handle,0) != pdPASS) {
     //if (xTaskCreate(_main_thread, "APM_MAIN", Scheduler::MAIN_SS, this, Scheduler::MAIN_PRIO, &_main_task_handle) != pdPASS) {
         hal.console->printf("FAILED to create task _main_thread\n");
     } else {
@@ -115,8 +108,8 @@ void Scheduler::init()
 
     //   xTaskCreate(_print_profile, "APM_PROFILE", IO_SS, this, IO_PRIO, nullptr);
 
-    //disableCore0WDT();
-    //disableCore1WDT();
+    disableCoreWDT(0);
+    disableCoreWDT(1);
 
 }
 
@@ -131,7 +124,7 @@ void Scheduler::thread_create_trampoline(void *ctx)
     AP_HAL::MemberProc *t = (AP_HAL::MemberProc *)ctx;
     (*t)();
     free(t);
-}
+}   
 
 uint8_t Scheduler::calculate_thread_priority(priority_base base, int8_t priority) const
 {
@@ -306,6 +299,7 @@ void Scheduler::_timer_thread(void *arg)
     printf("%s:%d start\n", __PRETTY_FUNCTION__, __LINE__);
 #endif
     Scheduler *sched = (Scheduler *)arg;
+    hal.console->printf(" _initialized %d\n", _initialized);
     while (!_initialized) {
         sched->delay_microseconds(1000);
     }

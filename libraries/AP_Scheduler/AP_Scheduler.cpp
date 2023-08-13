@@ -120,7 +120,7 @@ void AP_Scheduler::init(const AP_Scheduler::Task *tasks, uint8_t num_tasks, uint
 
     _num_tasks = _num_vehicle_tasks + _num_common_tasks;
 
-   _last_run = new uint16_t[_num_tasks];
+    _last_run = new uint16_t[_num_tasks];
     _tick_counter = 0;
 
     // setup initial performance counters
@@ -343,6 +343,12 @@ void AP_Scheduler::loop()
     hal.util->persistent_data.scheduler_task = -1;
 
     const uint32_t sample_time_us = AP_HAL::micros();
+    static int cnt = 0;
+    cnt++;
+    if(cnt == 100){
+        hal.console->printf("sample_time_us %d\n", sample_time_us);
+        cnt = 0;
+    }
     
     if (_loop_timer_start_us == 0) {
         _loop_timer_start_us = sample_time_us;
